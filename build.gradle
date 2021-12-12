@@ -1,0 +1,71 @@
+//buildscript {
+//    repositories {
+//        maven {
+//            url "https://plugins.gradle.org/m2/"
+//        }
+//    }
+//    dependencies {
+//        classpath "com.github.spotbugs.snom:spotbugs-gradle-plugin:5.0.2"
+//    }
+//}
+
+plugins {
+    id 'java'
+    id 'com.github.spotbugs' version "5.0.2"
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+//    jcenter()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+spotbugs {
+    ignoreFailures = true
+    showStackTraces = true
+    showProgress = true
+    effort = 'max'
+    reportLevel = 'default'
+//    visitors = [ 'FindSqlInjection', 'SwitchFallthrough' ]
+//    omitVisitors = [ 'FindNonShortCircuit' ]
+//    reportsDir = file("$buildDir/spotbugs")
+//    includeFilter = file("include.xml")
+//    excludeFilter = file("exclude.xml")
+//    baselineFile = file("baseline.xml")
+    onlyAnalyze = [ "com.ashwin.spotbugs.*", "com.ashwin.sample.*" ]
+    maxHeapSize = '1g'
+    extraArgs = [ '-nested:false' ]
+    jvmArgs = [ '-Duser.language=en', '-Duser.country=US' ]
+}
+
+dependencies {
+    // SpotBugs
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.11.0'
+    spotbugs 'com.github.spotbugs:spotbugs:4.5.1'
+
+    // test
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+}
+
+//tasks.matching { task -> task.name.startsWith('spotbugs') }.forEach {
+//    it.reports {
+//        html.enabled = true
+//        xml.enabled = false
+//        // spotbugs does not allow to generate a xml and html report at once https://github.com/spotbugs/spotbugs/issues/857
+//    }
+//}
+
+spotbugsMain {
+    reports {
+        html {
+            required = true
+            outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
